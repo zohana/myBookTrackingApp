@@ -14,11 +14,11 @@ class SearchPage extends Component {
     booksRead: [],
     query: "",
     showNotFound: false,
-    optionValue: "",
+    optionValue: "none",
     searchBooks: [],
-    isOptionSelected: false
+    isOptionSelected: true
   };
-
+  
   //function called when the user clears the input field
   clearQuery = () => {
     this.updateQuery("");
@@ -45,7 +45,8 @@ class SearchPage extends Component {
   };
 
   onBookUpdate = book => event => {
-    console.log(book);
+    console.log("optionValue " + this.state.optionValue);
+    //console.log(book);
     this.setState({
         optionValue: event.target.value,
         isOptionSelected: true
@@ -54,19 +55,24 @@ class SearchPage extends Component {
         console.log("optionValue " + this.state.optionValue);
 
         if (this.state.optionValue === "wantToRead") {
-          // book.push({"shelf": "wantToRead"})
           this.setState({
-            wantToRead: this.props.wantToRead.concat(book),
-            optionValue: "wantToRead"
+            wantToRead: this.props.wantToRead.push(book),
+            optionValue: "wantToRead", 
+            books: this.props.books.push(this.state.wantToRead)
           });
+          console.log(book);
           //BooksAPI.update(book, book.shelf);
           BooksAPI.update(book, this.props.wantToRead);
+          
+          
         }
         if (this.state.optionValue === "read") {
           //book.push({"shelf": "read"})
           this.setState({
-            booksRead: this.props.booksRead.concat(book),
-            optionValue: "read"
+            booksRead: this.props.booksRead.push(book),
+            optionValue: "read",
+            books: this.props.books.push(book)
+
           });
           //BooksAPI.update(book, book.shelf);
           BooksAPI.update(book, this.props.wantToRead);
@@ -75,11 +81,11 @@ class SearchPage extends Component {
         if (this.state.optionValue === "currentlyReading") {
           //book.push({"shelf": "currentlyReading"})
           this.setState({
-            currentlyReading:  this.props.currentlyReading.concat(book),
-            optionValue: "currentlyReading"
-          });
-          //BooksAPI.update(book, book.shelf);
+            currentlyReading:  this.props.currentlyReading.push(book),
+            optionValue: "currentlyReading",
+            books: this.props.books
 
+          });
           BooksAPI.update(book,  this.props.currentlyReading);
         }
       }
@@ -87,10 +93,9 @@ class SearchPage extends Component {
   };
 
   render() {
-    const { query, searchBooks, showNotFound } = this.state;
-    if (searchBooks.errors === true) {
-      alert("ooo");
-    }
+    const { query, searchBooks } = this.state;
+    console.log('this.props.books');
+    console.log(this.props.books);
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -109,7 +114,7 @@ class SearchPage extends Component {
         </div>
 
         <div className="search-books-results">
-          {this.state.query === "" || searchBooks.errors ? (
+          {this.state.query === ""  || searchBooks.errors  ? (
             <div>query cannot be empty</div>
           ) : (
             <div>
